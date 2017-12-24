@@ -149,14 +149,14 @@ public class Game {
                 c.row = i - (gridRows / 2);
                 c.col = j - (gridCols / 2);
                 c.setType(0); // empty space
-                if(!fromEditor) {
+                if (!fromEditor) {
                     cells.add(c);
-                }else {
+                } else {
                     newCells.add(c);
                 }
             }
         }
-        if(fromEditor) {
+        if (fromEditor) {
             Eventlistener.finishLoad = true;
             Eventlistener.outroAnimation = true;
         } else {
@@ -400,8 +400,8 @@ public class Game {
         }
         //checks win
         boolean advance = true;
-        for(Cell c: cells) {
-            if(c.getType() == 9 && c.player != null && !checkObligations()) {
+        for (Cell c : cells) {
+            if (c.getType() == 9 && c.player != null && !checkObligations()) {
                 // win!
                 JOptionPane.showMessageDialog(null, "Congratulations! You win!",
                         "Level complete!",
@@ -433,7 +433,7 @@ public class Game {
         // unlocks
         lockTimestep = false;
         // just advances timestep integer
-        if(advance) {
+        if (advance) {
             currentTimestep++;
         }
     }
@@ -762,20 +762,20 @@ public class Game {
         //removes players from array that time travelled, this also shifts stuff around
         //should only be one! so it breaks when found
         Player d = null;
-        for(Player p: players) {
-            if(p.departing) {
+        for (Player p : players) {
+            if (p.departing) {
                 d = p;
                 break;
             }
         }
-        if(d != null) {
+        if (d != null) {
             //found a departing time traveller
             //shifts down all higher bootNums and adds age modifier
-            for(Player p: players) {
-                if(p.bootNum > d.bootNum) {
+            for (Player p : players) {
+                if (p.bootNum > d.bootNum) {
                     p.bootNum--;
                     //adds time elapsed by the departed player
-                    p.agemod += (currentTimestep-d.birthday);
+                    p.agemod += (currentTimestep - d.birthday);
                 }
             }
             //now removes this player!
@@ -789,9 +789,9 @@ public class Game {
 
     public static Cell findCellWithPlayer(Player p) {
         // finds cell with this player
-        for(Cell c: cells) {
-            if(c.player != null) {
-                if(c.player.equals(p)) {
+        for (Cell c : cells) {
+            if (c.player != null) {
+                if (c.player.equals(p)) {
                     return c;
                 }
             }
@@ -802,27 +802,27 @@ public class Game {
     public static boolean checkCapableFulfill(Player p) {
         // checks to see if this player is capable of fulfilling any obligation
         // if not, tells why
-        for(Player q: players) {
-            if(q.bootNum > 0){
-                if(q.bootNum - 1 == p.bootNum) {
+        for (Player q : players) {
+            if (q.bootNum > 0) {
+                if (q.bootNum - 1 == p.bootNum) {
                     // of correct boot number, now check keys
                     // temporary array that we will chip away at as we check keys
                     String[] tempkeys = p.getKeyArray().clone();
                     String[] needkeys = q.getOriginalKeys();
-                    for(int i = 0; i < maxKeys; i++) {
-                        if(!needkeys[i].equals("")) {
+                    for (int i = 0; i < maxKeys; i++) {
+                        if (!needkeys[i].equals("")) {
                             //needs this key!
                             //checks to see of this key is present somewhere in tempkeys
                             boolean found = false;
-                            for(int j = 0; j < maxKeys; j++) {
-                                if(tempkeys[j].equals(needkeys[i])) {
+                            for (int j = 0; j < maxKeys; j++) {
+                                if (tempkeys[j].equals(needkeys[i])) {
                                     // has key... deletes then breaks
                                     tempkeys[j] = "";
                                     found = true;
                                     break;
                                 }
                             }
-                            if(!found) {
+                            if (!found) {
                                 //needs a key the player doesn't have!
                                 JOptionPane.showMessageDialog(null,
                                         "This player is missing required keys! See bootstrap menu for full list.",
@@ -845,8 +845,8 @@ public class Game {
 
     public static boolean checkObligations() {
         // checks for open obligations
-        for(Player p: players) {
-            if(p.bootNum > 0) {
+        for (Player p : players) {
+            if (p.bootNum > 0) {
                 return true;
             }
         }

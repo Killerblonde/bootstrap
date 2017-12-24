@@ -4,7 +4,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.util.awt.TextRenderer;
 
-import java.awt.Font;
+import java.awt.*;
 
 public class Eventlistener implements GLEventListener {
 
@@ -154,14 +154,14 @@ public class Eventlistener implements GLEventListener {
                         }
 
                         // time travel animation
-                        if(c.player != null) {
-                            if(c.player.arriving) {
+                        if (c.player != null) {
+                            if (c.player.arriving) {
                                 // draws player growing in radius
-                                Graphics.drawCells(2 * j + a, 1.75 * i, rad*ttRad, rot, RGBA, null, null, null);
+                                Graphics.drawCells(2 * j + a, 1.75 * i, rad * ttRad, rot, RGBA, null, null, null);
                                 drawOld = true;
-                            } else if(c.player.departing) {
+                            } else if (c.player.departing) {
                                 //draws player shrinking in radius
-                                Graphics.drawCells(2 * j + a, 1.75 * i, rad*(1-ttRad), rot, RGBA, null, null, null);
+                                Graphics.drawCells(2 * j + a, 1.75 * i, rad * (1 - ttRad), rot, RGBA, null, null, null);
                                 drawOld = true;
                             }
                         }
@@ -250,7 +250,7 @@ public class Eventlistener implements GLEventListener {
             }
 
             // time travel animation
-            if(ttRad < 1) {
+            if (ttRad < 1) {
                 ttRad += 0.02;
             } else {
                 ttRad = 0;

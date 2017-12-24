@@ -21,15 +21,15 @@ public class Player {
     public Player() {
         // populates keys (causing problems?)
 
-        for(int k = 0; k < Game.maxKeys; k++) {
+        for (int k = 0; k < Game.maxKeys; k++) {
             keys[k] = "";
         }
     }
 
     public void resetKeys() {
         // resets all keys
-        for(int k = 0; k < Game.maxKeys; k++) {
-            setKey("",k);
+        for (int k = 0; k < Game.maxKeys; k++) {
+            setKey("", k);
         }
     }
 
@@ -55,7 +55,7 @@ public class Player {
         for (int i = 0; i < bootNum; i++) {
             age += "?";
         }
-        if(bootNum > 0) {
+        if (bootNum > 0) {
             age += " + ";
         }
         age += "" + (Game.currentTimestep + agemod - birthday);
@@ -64,8 +64,8 @@ public class Player {
 
     public boolean hasOriginalKeys() {
         // figures out of the player has any keys
-        for(int i = 0; i < Game.maxKeys; i++) {
-            if(!originalKeys[i].equals("")) {
+        for (int i = 0; i < Game.maxKeys; i++) {
+            if (!originalKeys[i].equals("")) {
                 return true;
             }
         }
@@ -89,8 +89,8 @@ public class Player {
 
     public String listOriginalKeys() {
         String k = "";
-        for(int i = 0; i < Game.maxKeys; i++) {
-            if(originalKeys[i].equals("")) {
+        for (int i = 0; i < Game.maxKeys; i++) {
+            if (originalKeys[i].equals("")) {
                 break;
             } else if (i > 0) {
                 // not first key!
@@ -105,17 +105,18 @@ public class Player {
 
     public String obliText() {
         //returns obligation text
+        //should only be called if bootNum > 0!
         String gentext = "";
-        if(bootNum == 1) {
+        if (bootNum == 1) {
             gentext = "primary generation";
         } else {
             gentext = "generation ";
-            for(int i = 0; i < bootNum; i++) {
+            for (int i = 0; i < bootNum - 1; i++) {
                 gentext += "?";
             }
         }
         String obli = "Player of " + gentext + " must travel to timestep " + birthday;
-        if(!hasOriginalKeys()) {
+        if (!hasOriginalKeys()) {
             obli += ".";
         } else {
             obli += " holding keys: " + listOriginalKeys() + ".";

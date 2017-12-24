@@ -1,4 +1,3 @@
-
 public class Cell {
 
     public float red = 0;
@@ -432,11 +431,11 @@ public class Cell {
                 found = true;
             }
             //now that it has been found, start shifting down
-            if(found && i < Game.maxKeys-1) {
-                setKey(getKey(i+1),i);
-            } else if(found) {
+            if (found && i < Game.maxKeys - 1) {
+                setKey(getKey(i + 1), i);
+            } else if (found) {
                 // last index, if it has anything in it just delete (would have already been shifted down)
-                setKey("",i);
+                setKey("", i);
             }
 
         }
@@ -503,17 +502,17 @@ public class Cell {
 
     public void flipOpenClosed() {
         // flips door open or closed
-        if(cellType == 5) {
+        if (cellType == 5) {
             //open
             cellType = 4;
         } else if (cellType == 4) {
             //close
             cellType = 5;
             //if there is a player under the door, ENDS GAME!!!
-            if(player != null) {
+            if (player != null) {
                 Game.playerCrushed();
             }
         }
-        autoProp(false,false);
+        autoProp(false, false);
     }
 }
