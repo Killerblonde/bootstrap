@@ -105,8 +105,8 @@ public class Game {
      */
     public static void levelEditor() {
         //first asks if player wants to load level or create new
-        String[] opts = {"Load Level to Edit",
-                "Create New Level"};
+        String[] opts = {"Create New Level",
+                "Load Level to Edit"};
         int loadOrCreate = JOptionPane.showOptionDialog(null,
                 "Load level to edit or create new?",
                 "Bootstrap",
@@ -118,6 +118,9 @@ public class Game {
 
         switch (loadOrCreate) {
             case 0:
+                editNewLevel(false);
+                break;
+            case 1:
                 //load previous level
                 if (!loadLevel(false)) {
                     // user cancelled
@@ -128,25 +131,6 @@ public class Game {
                 cells.addAll(newCells);
                 newCells.clear();
                 break;
-            case 1:
-                //create new level
-                levelName = askLevelName();
-                askGridSize();
-                //draws level editor grid
-
-                // sets initial zoom and maximum zoom
-                Renderer.setUnitsWide(Math.max(3 * gridRows, 3 * gridCols));
-
-                for (int i = 0; i < gridRows; i++) {
-                    for (int j = 0; j < gridCols; j++) {
-                        Cell c = new Cell();
-                        c.row = i - (gridRows / 2);
-                        c.col = j - (gridCols / 2);
-                        c.setType(0); // empty space
-                        cells.add(c);
-                    }
-                }
-                break;
             default:
                 System.exit(0);
                 break;
@@ -154,6 +138,33 @@ public class Game {
         firstLoad = false;
         Eventlistener.introAnimation = true;
         Renderer.init();
+    }
+
+    public static void editNewLevel(boolean fromEditor) {
+        levelName = askLevelName();
+        askGridSize();
+        //draws level editor grid
+        newCells.clear();
+
+        for (int i = 0; i < gridRows; i++) {
+            for (int j = 0; j < gridCols; j++) {
+                Cell c = new Cell();
+                c.row = i - (gridRows / 2);
+                c.col = j - (gridCols / 2);
+                c.setType(0); // empty space
+                if(!fromEditor) {
+                    cells.add(c);
+                }else {
+                    newCells.add(c);
+                }
+            }
+        }
+        if(fromEditor) {
+            Eventlistener.finishLoad = true;
+            Eventlistener.outroAnimation = true;
+        } else {
+            Renderer.setUnitsWide(Math.max(3 * gridRows, 3 * gridCols));
+        }
     }
 
     public static boolean loadLevel(boolean reloadCurrent) {

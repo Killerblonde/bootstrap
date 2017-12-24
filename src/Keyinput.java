@@ -57,6 +57,7 @@ public class Keyinput implements KeyListener {
                                 "Save Level",
                                 "Rename",
                                 "Load Level to Edit",
+                                "Create New Level",
                                 "How to Use Editor"};
                         int b = JOptionPane.showOptionDialog(null,
                                 "DO NOT SCROLL MOUSE IN THIS MENU! WILL CRASH GAME! Hit ESC again to close.",
@@ -88,6 +89,10 @@ public class Keyinput implements KeyListener {
                                 Game.loadLevel(false);
                                 break;
                             case 4:
+                                // new level
+                                Game.editNewLevel(true);
+                                break;
+                            case 5:
                                 // show help
                                 Game.showEditorHelp();
                                 break;
