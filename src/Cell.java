@@ -15,6 +15,8 @@ public class Cell {
 
     public boolean selected = false;
 
+    public boolean activated = false; //if this is a door, means button has changed it open/closed
+
     // some cells are labelled (e.g. doors link to buttons, players)
     public String label = "";
     public boolean labelled = false;
@@ -497,5 +499,21 @@ public class Cell {
             }
         }
         return r;
+    }
+
+    public void flipOpenClosed() {
+        // flips door open or closed
+        if(cellType == 5) {
+            //open
+            cellType = 4;
+        } else if (cellType == 4) {
+            //close
+            cellType = 5;
+            //if there is a player under the door, ENDS GAME!!!
+            if(player != null) {
+                Game.playerCrushed();
+            }
+        }
+        autoProp(false,false);
     }
 }

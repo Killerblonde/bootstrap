@@ -131,6 +131,9 @@ public class Keyinput implements KeyListener {
                 //B key
                 switch (Game.gameMode) {
                     case 0:
+                        // view open bootstraps
+                        // in fact, these are just certain players from the array
+                        Game.showObligations();
                         break;
                     case 1:
                         // button
@@ -157,6 +160,7 @@ public class Keyinput implements KeyListener {
                 //O key
                 switch (Game.gameMode) {
                     case 0:
+
                         break;
                     case 1:
                         // open door

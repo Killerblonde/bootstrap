@@ -193,6 +193,11 @@ public class Game {
 
         if (success) {
 
+            //resets some stuff
+            currentTimestep = 0;
+            highestBootnum = 0;
+            command = 0;
+
             Eventlistener.pauseRendering = true;
             newCellsFromString(currentLevelString);
             Eventlistener.pauseRendering = false;
@@ -216,6 +221,7 @@ public class Game {
         // assumes renderer is already initialized, this just sets the cell array
         // also assumed saveString is well formatted
         // does not clear cells!!! this is handled elsewhere...
+        newCells.clear(); //clears these though ^____^
         String savemod = saveString;
         int i0 = savemod.indexOf('['); //assumes no brackets in save name, or else this breaks big time!
         levelName = savemod.substring(0, i0);
@@ -344,7 +350,7 @@ public class Game {
         for (Cell c : cells) {
             if (c.hasMovingPlayer()) {
                 // gives player to new cell, removes from old
-                // also merges keys (assumes no overflow! this was checked eariler...)
+                // also merges keys (assumes no overflow! this was checked earlier...)
                 Cell d = getCell(c.player.mRow, c.player.mCol);
                 c.addAllKeys(d.getKeyArray()); //adds keys to old cell
                 d.player = c.player; //sets new cell to player
@@ -352,6 +358,32 @@ public class Game {
                 // player should have key array...
                 c.clearKeys();
                 d.player.move();
+            }
+        }
+        // now see what button groups are activated and not
+        for (Cell c : cells) {
+            if (c.getType() == 2) {
+                // found a button
+                // checks to see if all buttons of this group are activated
+                String butlab = c.label;
+                boolean allActivated = true;
+                for (Cell b : cells) {
+                    if (b.getType() == 2 && b.label.equals(butlab)) {
+                        // found same label
+                        if (b.player == null) {
+                            allActivated = false;
+                            break;
+                        }
+                    }
+                }
+                // checks to see if any doors need to be toggled
+                for (Cell d : cells) {
+                    if (d.activated != allActivated && d.label.equals(butlab)) {
+                        // door has yet to be activated
+                        d.activated = allActivated;
+                        d.flipOpenClosed();
+                    }
+                }
             }
         }
         // unlocks
@@ -418,7 +450,7 @@ public class Game {
         // checks adjacency between cells
         // returns false if same cell!
         // also can handle being given null as input, returns false
-        if(c1 == null || c2 == null) {
+        if (c1 == null || c2 == null) {
             return false;
         }
         if (c1.row == c2.row && Math.abs(c1.col - c2.col) == 1) {
@@ -617,16 +649,16 @@ public class Game {
                         "Selecting a player and then clicking an adjacent cell in move mode will plan a move. \n" +
                         "This move will be completed in the next time step. Click on the player to cancel. \n" +
                         "Players can move through empty space, open doors, onto buttons, and time machines. \n" +
-                        "To win the puzzle, move onto the exit after fulfilling all bootstraps (see below).  \n" +
+                        "To win, move onto the exit after fulfilling all bootstraps - press (B) to view.  \n" +
                         "\n" +
                         "If a player moves onto a button, it will open or close doors with the same label. \n" +
                         "A button will deactivate if the player moves off. \n" +
+                        "Multiple buttons with the same label are linked by an 'AND' conjunction. \n" +
                         "A closing door will kill any player under it! Players move first, then doors open/close. \n" +
                         "\n" +
-                        "If you move onto an empty space with a key, that player will automatically pick it up. \n" +
+                        "If you move onto an empty space with keys, that player will automatically pick them up. \n" +
                         "Interact with another player to give them a key, or empty space to drop it. \n" +
                         "Keys can be used to unlock doors, which will turn them into open doors. \n " +
-                        "Each player can only hold one key, (they are extremely heavy.) \n" +
                         "\n" +
                         "Press (SPACE) to advance timestep. This will manifest all movements. \n" +
                         "This will also cause players to age, displayed in red text on the player. \n" +
@@ -647,6 +679,41 @@ public class Game {
                         "After completing a puzzle, you can 'view' your solution through the eyes of the player! \n" +
                         "This is the only time you actually experience time travel. The game is otherwise linear. \n"
                 , "Bootstrap", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public static void showObligations() {
+        // goes through players, figures out which are bootstrapped and need to be fulfilled
+
+
+    }
+
+    public static void playerCrushed() {
+        // gives user option to restart or quit
+        // this is the only way a puzzle can be lost
+        JOptionPane.showMessageDialog(null, "A player has been crushed by a closing door!",
+                "Game over!",
+                JOptionPane.ERROR_MESSAGE);
+
+        String[] opts = {"Restart Level",
+                "Quit Game"};
+        int restartOrQuit = JOptionPane.showOptionDialog(null,
+                "Restart?",
+                "Game over!",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.ERROR_MESSAGE,
+                null,
+                opts,
+                opts[0]);
+        switch(restartOrQuit) {
+            case 0:
+                //restart level
+                loadLevel(true);
+                break;
+            default:
+                //ends game
+                System.exit(0);
+                break; //heh
+        }
     }
 
 }
