@@ -11,7 +11,11 @@ public class Eventlistener implements GLEventListener {
     public static GL2 gl = null;
     private double rot = 0;
     private double rad = 0;
-    private static double moveGhost = 0; // move ghosting, from 0 to 1. Always incrementing
+    private double moveGhost = 0; // move ghosting, from 0 to 1. Always incrementing
+    private double ttRad = 0; // time travel radius modifier
+
+    public static boolean ttAnimation = false;
+    public static boolean ttAnimationBegun = false;
 
     public static boolean moveAnimation = false; // will do one opaque move animation if true
     public static boolean moveAnimationBegun = false; // start from beginning
@@ -49,6 +53,13 @@ public class Eventlistener implements GLEventListener {
                 //resets moveGhost
                 moveGhost = 0;
                 moveAnimationBegun = true;
+                //stops clikcing
+                Mouseinput.pauseMouse = true;
+            }
+            if (ttAnimation && !ttAnimationBegun) {
+                //resets
+                ttRad = 0;
+                ttAnimationBegun = true;
                 //stops clikcing
                 Mouseinput.pauseMouse = true;
             }
@@ -141,13 +152,27 @@ public class Eventlistener implements GLEventListener {
                                 RGBA[3] = c.getRGBA(false)[3];
                             }
                         }
+
+                        // time travel animation
+                        if(c.player != null) {
+                            if(c.player.arriving) {
+                                // draws player growing in radius
+                                Graphics.drawCells(2 * j + a, 1.75 * i, rad*ttRad, rot, RGBA, null, null, null);
+                                drawOld = true;
+                            } else if(c.player.departing) {
+                                //draws player shrinking in radius
+                                Graphics.drawCells(2 * j + a, 1.75 * i, rad*(1-ttRad), rot, RGBA, null, null, null);
+                                drawOld = true;
+                            }
+                        }
+
                     } else {
                         RGBA[0] = 0;
                         RGBA[1] = 0;
                         RGBA[2] = 0;
                         RGBA[3] = 1;
                     }
-                    //if this was a player moving, does not render where the player was
+                    //if this was a player moving or time travelling, does not render where the player was
                     if (drawOld) {
                         //draws empty tile in the player's place
                         //assumes c has been defined above
@@ -221,6 +246,20 @@ public class Eventlistener implements GLEventListener {
                     Game.finishTimestep();
                 }
                 //lets user left click again
+                Mouseinput.pauseMouse = false;
+            }
+
+            // time travel animation
+            if(ttRad < 1) {
+                ttRad += 0.02;
+            } else {
+                ttRad = 0;
+                // finished animation
+                ttAnimation = false;
+                ttAnimationBegun = false;
+                // tells game that arrivals are done
+                Game.noTimeTravellers();
+
                 Mouseinput.pauseMouse = false;
             }
 

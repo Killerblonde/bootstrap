@@ -354,6 +354,7 @@ public class Game {
                 Cell d = getCell(c.player.mRow, c.player.mCol);
                 c.addAllKeys(d.getKeyArray()); //adds keys to old cell
                 d.player = c.player; //sets new cell to player
+                d.hasMovePlanned = false;
                 c.player = null;
                 // player should have key array...
                 c.clearKeys();
@@ -416,8 +417,8 @@ public class Game {
                         goodLabel = false;
                     }
                 } else if (proposedLabel.contains("[") || proposedLabel.contains("]")
-                        || proposedLabel.contains("|") || proposedLabel.contains(",")) {
-                    JOptionPane.showMessageDialog(null, "Label cannot contain '[' ']' '|' " +
+                        || proposedLabel.contains("|") || proposedLabel.contains(",") || proposedLabel.contains(" ")) {
+                    JOptionPane.showMessageDialog(null, "Label cannot contain spaces '[' ']' '|' " +
                                     "or ','!",
                             "Naming Level",
                             JOptionPane.WARNING_MESSAGE);
@@ -444,6 +445,14 @@ public class Game {
             c.player.resetKeys();
         }
 
+    }
+
+    public static void noTimeTravellers() {
+        // clears departure/arrival status of time travellers
+        for(Player p: players) {
+            p.arriving = false;
+            p.departing = false;
+        }
     }
 
     public static boolean checkAdjacent(Cell c1, Cell c2) {

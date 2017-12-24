@@ -79,6 +79,7 @@ public class Mouseinput implements MouseListener {
                                         s.player.willMove = true;
                                         s.player.mCol = targ.col;
                                         s.player.mRow = targ.row;
+                                        targ.hasMovePlanned = true;
                                         // will not select new cell, in fact, deselect
                                         Game.deselect();
                                         noSelect = true;
@@ -87,9 +88,8 @@ public class Mouseinput implements MouseListener {
                                     // clicked same cell to move, cancels and deselects
                                     // doesn't matter if mCol and mRow are still set to something lol
                                     s.player.willMove = false;
-                                } else {
-                                    // move not possible
                                 }
+                                //otherwise move impossible
                                 break;
                             case 1:
                                 //interact
@@ -99,26 +99,77 @@ public class Mouseinput implements MouseListener {
                                 // it is impossible to use the time machine, so in fact there is none
                                 // first checks to see if trying to interact with adjacent empty cell or player
 
-                                if(targ.getType() == 8 && targ.player == null) {
+                                if (targ.getType() == 8 && targ.player == null) {
                                     // trying to summon (only thing possible)
-
-
-
-                                    System.out.println("bootstrap");
-                                } else if(s != null) {
+                                    // opens dialogue to ask user what to summon
+                                    Eventlistener.pauseRendering = true;
+                                    int bootstrapChoice = JOptionPane.showConfirmDialog(
+                                            null,
+                                            "Boostrap Player from Future?",
+                                            "Time Machine",
+                                            JOptionPane.YES_NO_OPTION);
+                                    if (bootstrapChoice == 0) {
+                                        // adds new player
+                                        // animates
+                                        Eventlistener.ttAnimation = true;
+                                        Player p = new Player();
+                                        p.bootNum = Game.highestBootnum + 1;
+                                        Game.highestBootnum++;
+                                        p.birthday = Game.currentTimestep;
+                                        p.arriving = true;
+                                        p.col = targ.col;
+                                        p.row = targ.row;
+                                        Game.players.add(p);
+                                        targ.player = p;
+                                        // asks if the bootstrapped player should have any keys
+                                        int addedKeys = 0;
+                                        String messageText1 = "Bootstrap with key? (No commas or spaces!)";
+                                        String messageText2 = "Bootstrap with another key?";
+                                        while (addedKeys < Game.maxKeys) {
+                                            String messageText = "";
+                                            if(addedKeys == 0){
+                                                messageText = messageText1;
+                                            } else {
+                                                messageText = messageText2;
+                                            }
+                                            String proposedKey = JOptionPane.showInputDialog(messageText);
+                                            if (proposedKey == null) {
+                                                //breaks out of loop
+                                                break;
+                                            } else if (proposedKey.equals("")) {
+                                                //also breaks
+                                                break;
+                                            }
+                                            //checks for commas
+                                            if (proposedKey.contains(",") || proposedKey.contains(" ")) {
+                                                JOptionPane.showMessageDialog(null, "Key label cannot have commas " +
+                                                                "or spaces!",
+                                                        "Cannot bootstrap with proposed key.",
+                                                        JOptionPane.WARNING_MESSAGE);
+                                            } else {
+                                                targ.addKey(proposedKey);
+                                                addedKeys++;
+                                            }
+                                        }
+                                        //unpauses renderer and does time travel animation
+                                        Game.deselect();
+                                        noSelect = true;
+                                        Eventlistener.pauseRendering = false;
+                                    }
+                                } else if (s != null) {
                                     // checks adjacency and ability to receive key
-                                    if(s.player != null && Game.checkAdjacent(s, targ) &&
+                                    if (s.player != null && Game.checkAdjacent(s, targ) &&
                                             (targ.canHaveKey || targ.player != null || targ.getType() == 6)) {
                                         // must be player adjacent to selection
                                         // either target cell has a player on it, can have a key, or is a locked door
                                         // also checks if there is one to give!
-                                        if(targ.getType() != 6) {
+                                        if (targ.getType() != 6) {
                                             // trying to give key
-                                            if(targ.numKeys() < Game.maxKeys && s.hasKeys()) {
+                                            if (targ.numKeys() < Game.maxKeys && s.hasKeys()) {
                                                 // can receive and has one to give!
                                                 // asks player which key he wants to give
                                                 String[] keysToGive = s.getShortKeyArray();
-                                                String giveKey = (String)JOptionPane.showInputDialog(
+                                                String giveKey = (String) JOptionPane.showInputDialog(
                                                         null,
                                                         "Which key would you like to give?",
                                                         "Give Key",
@@ -126,7 +177,7 @@ public class Mouseinput implements MouseListener {
                                                         null,
                                                         keysToGive,
                                                         keysToGive[0]);
-                                                if(giveKey != null) {
+                                                if (giveKey != null) {
                                                     // user made a choice
                                                     targ.addKey(giveKey);
                                                     s.removeKey(giveKey);
@@ -135,9 +186,9 @@ public class Mouseinput implements MouseListener {
                                             noSelect = true; // does not select new cell, keeps selected player
                                         } else {
                                             // trying to unlock door
-                                            if(s.hasThisKey(targ.label)) {
+                                            if (s.hasThisKey(targ.label)) {
                                                 // unlocks door! (sets to open door)
-                                                Game.setCell(targ,4);
+                                                Game.setCell(targ, 4);
                                                 noSelect = true;
                                             } else {
                                                 JOptionPane.showMessageDialog(null,
@@ -148,7 +199,7 @@ public class Mouseinput implements MouseListener {
                                             }
 
                                         }
-                                    } else if(s.equals(targ) && s.getType() == 8) {
+                                    } else if (s.equals(targ) && s.getType() == 8) {
                                         // only other action possible is a player clicking on themself on a time machine
                                         // this is to fulfill a bootstrap
 

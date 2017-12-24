@@ -10,6 +10,10 @@ public class Player {
     public int mRow = 0;
     public boolean willMove = false;
 
+    //for time travel animations
+    public boolean arriving = false;
+    public boolean departing = false;
+
     private String[] keys = new String[Game.maxKeys];
 
     public Player() {
