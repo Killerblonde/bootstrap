@@ -49,6 +49,8 @@ public class Eventlistener implements GLEventListener {
                 //resets moveGhost
                 moveGhost = 0;
                 moveAnimationBegun = true;
+                //stops clikcing
+                Mouseinput.pauseMouse = true;
             }
 
             gl = drawable.getGL().getGL2();
@@ -97,11 +99,11 @@ public class Eventlistener implements GLEventListener {
                             label = c.label;
                         }
                         if (c.hasKeys() && !introAnimation && !outroAnimation) {
-                            for(int k = 0; k < Game.maxKeys; k++) {
-                                if(k == 0) {
+                            for (int k = 0; k < Game.maxKeys; k++) {
+                                if (k == 0) {
                                     key = "";
                                 }
-                                if(k > 0 && !c.getKey(k).equals("")) {
+                                if (k > 0 && !c.getKey(k).equals("")) {
                                     key += ",";
                                 }
                                 key += c.getKey(k);
@@ -218,7 +220,8 @@ public class Eventlistener implements GLEventListener {
                     // has game class finalize motions
                     Game.finishTimestep();
                 }
-
+                //lets user left click again
+                Mouseinput.pauseMouse = false;
             }
 
         }

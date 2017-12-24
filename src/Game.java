@@ -161,12 +161,12 @@ public class Game {
         // returns boolean if successful
         // outro animation then pauses once complete
         //the event listener calls another method to finish loading
-        Eventlistener.pauseRendering = true;
         boolean success = true;
         if (!reloadCurrent) {
             String fileText = "";
             final JFileChooser fc = new JFileChooser("./levels");
             int returnVal = fc.showOpenDialog(null);
+
             File f;
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 f = fc.getSelectedFile();
@@ -190,11 +190,12 @@ public class Game {
         }
 
         // gets new cells, either from current level to restart or new level from above file read
-        newCellsFromString(currentLevelString);
-
-        Eventlistener.pauseRendering = false;
 
         if (success) {
+
+            Eventlistener.pauseRendering = true;
+            newCellsFromString(currentLevelString);
+            Eventlistener.pauseRendering = false;
             if (firstLoad) {
                 // only do intro animation
                 //sets up renderer again
@@ -416,6 +417,10 @@ public class Game {
     public static boolean checkAdjacent(Cell c1, Cell c2) {
         // checks adjacency between cells
         // returns false if same cell!
+        // also can handle being given null as input, returns false
+        if(c1 == null || c2 == null) {
+            return false;
+        }
         if (c1.row == c2.row && Math.abs(c1.col - c2.col) == 1) {
             // same row, one apart
             return true;

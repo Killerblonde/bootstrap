@@ -8,7 +8,6 @@ public class Keyinput implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("KEYCODE: " + e.getKeyCode());
         // depends on game mode for what keys do
         switch (e.getKeyCode()) {
             case 27:
@@ -263,7 +262,7 @@ public class Keyinput implements KeyListener {
                 switch (Game.gameMode) {
                     case 0:
                         // switch move and interact command
-                        Game.command = 1-Game.command; //huehuehuehue
+                        Game.command = 1 - Game.command; //huehuehuehue
                         break;
                     case 1:
                         break;

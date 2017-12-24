@@ -26,7 +26,6 @@ public class Graphics {
         gl.glEnd();
 
 
-
         //draw label
         if (l != null) {
             hexText.beginRendering(Renderer.getWindowWidth(), Renderer.getWindowHeight());
@@ -50,7 +49,7 @@ public class Graphics {
             hexText.draw(k, (int) ((x - Renderer.centerOffX + Renderer.unitsWide / 2) * Renderer.getPixelsPerUnit()
                             - k.length() * 2),
                     (int) ((Renderer.getUnitsTall(Renderer.unitsWide) / 2 + y - Renderer.centerOffY)
-                            * Renderer.getPixelsPerUnit())-10); // "- s.length()*2" shifts over to center text kinda
+                            * Renderer.getPixelsPerUnit()) - 10); // "- s.length()*2" shifts over to center text kinda
             // minus 10 pixels in case it has label AND key
             hexText.endRendering();
         }
@@ -64,7 +63,7 @@ public class Graphics {
             hexText.draw(a, (int) ((x - Renderer.centerOffX + Renderer.unitsWide / 2) * Renderer.getPixelsPerUnit()
                             - a.length() * 2),
                     (int) ((Renderer.getUnitsTall(Renderer.unitsWide) / 2 + y - Renderer.centerOffY)
-                            * Renderer.getPixelsPerUnit())+10); // "- s.length()*2" shifts over to center text kinda
+                            * Renderer.getPixelsPerUnit()) + 10); // "- s.length()*2" shifts over to center text kinda
             // plus 10 pixels to be above other stuff
             hexText.endRendering();
         }

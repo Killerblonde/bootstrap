@@ -12,7 +12,7 @@ public class Renderer {
     public static int screenW = 1280;
     public static int screenH = 640;
 
-    public static final int FPS = 60;
+    public static final int FPS = 300;
 
     // this is controlled to make the camera "zoom" in and out
     public static float unitsWide = 50;

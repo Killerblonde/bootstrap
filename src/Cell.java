@@ -166,7 +166,7 @@ public class Cell {
                 // locked (closed) door
                 red = 0.4f;
                 green = 0.3f;
-                blue = 0.3f;
+                blue = 0.2f;
                 labelled = true;
                 customLabel = true;
                 passable = false;
@@ -176,11 +176,11 @@ public class Cell {
             case 8:
                 // time machine
                 red = 0;
-                green = 0.2f;
-                blue = 0.8f;
+                green = 0.3f;
+                blue = 0.9f;
                 labelled = false;
                 customLabel = false;
-                passable = false;
+                passable = true;
                 canHaveKey = false;
                 break;
             case 9:
@@ -262,7 +262,6 @@ public class Cell {
         } else {
             RGBA[3] = deselAlpha;
         }
-
         return RGBA;
     }
 
@@ -384,6 +383,16 @@ public class Cell {
         return keys;
     }
 
+    public String[] getShortKeyArray() {
+        // returns minimum array
+        // assumes there are some keys to begin with! otherwise might get funky...
+        String[] minkeys = new String[numKeys()];
+        for (int i = 0; i < numKeys(); i++) {
+            minkeys[i] = getKey(i);
+        }
+        return minkeys;
+    }
+
     public void clearKeys() {
         // clears keys from cell, and player too if there is one
         for (int i = 0; i < Game.maxKeys; i++) {
@@ -408,6 +417,36 @@ public class Cell {
             System.out.println("Tried to add key to full array! :(");
         }
 
+    }
+
+    public void removeKey(String key) {
+        // tries to remove key and then shifts all other keys down one slot
+        boolean found = false;
+        for (int i = 0; i < Game.maxKeys; i++) {
+            if (!getKey(i).equals(key) && !found) {
+                // not found yet
+                continue;
+            } else if (!found) {
+                found = true;
+            }
+            //now that it has been found, start shifting down
+            if(found && i < Game.maxKeys-1) {
+                setKey(getKey(i+1),i);
+            } else if(found) {
+                // last index, if it has anything in it just delete (would have already been shifted down)
+                setKey("",i);
+            }
+
+        }
+    }
+
+    public boolean hasThisKey(String key) {
+        for (int i = 0; i < Game.maxKeys; i++) {
+            if (getKey(i).equals(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean hasKeys() {

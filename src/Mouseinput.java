@@ -8,11 +8,13 @@ public class Mouseinput implements MouseListener {
     private int x = 0;
     private int y = 0;
 
+    public static boolean pauseMouse = false;
+
     @Override
     public void mouseClicked(MouseEvent e) {
 
         // left click to select cells
-        if (e.getButton() == 1) {
+        if (e.getButton() == 1 && !pauseMouse) {
             // selects given cell, if possible
             // first finds what unit we are in
             float unitsWide = Renderer.unitsWide;
@@ -38,7 +40,7 @@ public class Mouseinput implements MouseListener {
                 // must shift
                 a = 1f;
             }
-            int clickHexCol = Math.round((clickUnitXfromCenter - 1f + a) / 2);
+            int clickHexCol = Math.round((clickUnitXfromCenter - 1 + a) / 2);
 
             // checks to see if in bounds
             if (-Game.gridRows / 2 <= clickHexRow && clickHexRow < (float) Game.gridRows / 2
@@ -49,22 +51,22 @@ public class Mouseinput implements MouseListener {
                         Cell targ = Game.getCell(clickHexRow, clickHexCol);
                         // depending on command, will try to move or interact
                         boolean noSelect = false;
-                        switch(Game.command) {
+                        Cell s = Game.selectedCell;
+                        switch (Game.command) {
                             case 0:
                                 //move
                                 // checks to see if cell is passable and no movement is planned
                                 // also if the selected player can actually move there! (must be adjacent)
                                 // finally, makes sure not too many keys coming together
-                                Cell s = Game.selectedCell;
-                                if(s == null) {
+                                if (s == null) {
                                     // no selected cell yet, don't try any movements!
                                     break;
                                 }
-                                if(targ.getPassable() && !targ.hasMovePlanned
-                                        && Game.checkAdjacent(targ,s) && s.player != null) {
+                                if (targ.getPassable() && !targ.hasMovePlanned
+                                        && Game.checkAdjacent(targ, s) && s.player != null) {
                                     // possible move!
                                     // checks for too many keys
-                                    if(s.numKeys() + targ.numKeys() > Game.maxKeys) {
+                                    if (s.numKeys() + targ.numKeys() > Game.maxKeys) {
                                         // too many!
                                         JOptionPane.showMessageDialog(null,
                                                 "Too many keys in one spot!",
@@ -81,7 +83,7 @@ public class Mouseinput implements MouseListener {
                                         Game.deselect();
                                         noSelect = true;
                                     }
-                                } else if (s.equals(targ) && s.player != null){
+                                } else if (s.equals(targ) && s.player != null) {
                                     // clicked same cell to move, cancels and deselects
                                     // doesn't matter if mCol and mRow are still set to something lol
                                     s.player.willMove = false;
@@ -91,13 +93,74 @@ public class Mouseinput implements MouseListener {
                                 break;
                             case 1:
                                 //interact
+                                // depending on what player clicks on, may be trying to give/use key or use time machine
+                                // empty space/other player = give key, locked door = open door, time machine = use
+                                // only ambiguity is if another player is standing on a time machine, but in this case
+                                // it is impossible to use the time machine, so in fact there is none
+                                // first checks to see if trying to interact with adjacent empty cell or player
 
+                                if(targ.getType() == 8 && targ.player == null) {
+                                    // trying to summon (only thing possible)
+
+
+
+                                    System.out.println("bootstrap");
+                                } else if(s != null) {
+                                    // checks adjacency and ability to receive key
+                                    if(s.player != null && Game.checkAdjacent(s, targ) &&
+                                            (targ.canHaveKey || targ.player != null || targ.getType() == 6)) {
+                                        // must be player adjacent to selection
+                                        // either target cell has a player on it, can have a key, or is a locked door
+                                        // also checks if there is one to give!
+                                        if(targ.getType() != 6) {
+                                            // trying to give key
+                                            if(targ.numKeys() < Game.maxKeys && s.hasKeys()) {
+                                                // can receive and has one to give!
+                                                // asks player which key he wants to give
+                                                String[] keysToGive = s.getShortKeyArray();
+                                                String giveKey = (String)JOptionPane.showInputDialog(
+                                                        null,
+                                                        "Which key would you like to give?",
+                                                        "Give Key",
+                                                        JOptionPane.PLAIN_MESSAGE,
+                                                        null,
+                                                        keysToGive,
+                                                        keysToGive[0]);
+                                                if(giveKey != null) {
+                                                    // user made a choice
+                                                    targ.addKey(giveKey);
+                                                    s.removeKey(giveKey);
+                                                }
+                                            }
+                                            noSelect = true; // does not select new cell, keeps selected player
+                                        } else {
+                                            // trying to unlock door
+                                            if(s.hasThisKey(targ.label)) {
+                                                // unlocks door! (sets to open door)
+                                                Game.setCell(targ,4);
+                                                noSelect = true;
+                                            } else {
+                                                JOptionPane.showMessageDialog(null,
+                                                        "You need the key: " + targ.label,
+                                                        "Cannot unlock!",
+                                                        JOptionPane.WARNING_MESSAGE);
+                                                noSelect = true;
+                                            }
+
+                                        }
+                                    } else if(s.equals(targ) && s.getType() == 8) {
+                                        // only other action possible is a player clicking on themself on a time machine
+                                        // this is to fulfill a bootstrap
+
+                                        System.out.println("fulfill");
+                                    }
+                                }
                                 break;
                             default:
                                 break;
                         }
                         // selects new cell
-                        if(!noSelect) {
+                        if (!noSelect) {
                             Game.selectCell(clickHexRow, clickHexCol);
                         }
                         break;
@@ -111,7 +174,7 @@ public class Mouseinput implements MouseListener {
                         }
                         // if trying to give a key (t = 7) make sure this is possible (only way this can fail)
                         Cell c = Game.getCell(clickHexRow, clickHexCol);
-                        if(t != 7 || c.canHaveKey) {
+                        if (t != 7 || c.canHaveKey) {
                             Game.setCell(c, t);
                         }
                         break;
