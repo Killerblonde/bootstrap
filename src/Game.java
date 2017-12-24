@@ -387,8 +387,42 @@ public class Game {
                 }
             }
         }
+        //checks win
+        for(Cell c: cells) {
+            if(c.getType() == 9 && c.player != null && !checkObligations()) {
+                // win!
+                JOptionPane.showMessageDialog(null, "Congratulations! You win!",
+                        "Level complete!",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+                String[] opts = {"Load Level",
+                        "Quit Game"};
+                int restartOrQuit = JOptionPane.showOptionDialog(null,
+                        "Play again?",
+                        "Level Complete!",
+                        JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        opts,
+                        opts[0]);
+                switch (restartOrQuit) {
+                    case 0:
+                        //load level
+                        loadLevel(false);
+                        break;
+                    default:
+                        //ends game
+                        System.exit(0);
+                        break; //heh
+                }
+            }
+        }
         // unlocks
         lockTimestep = false;
+    }
+
+    public static void checkWin() {
+
     }
 
     public static void setCell(Cell c, int type) {
@@ -449,7 +483,7 @@ public class Game {
 
     public static void noTimeTravellers() {
         // clears departure/arrival status of time travellers
-        for(Player p: players) {
+        for (Player p : players) {
             p.arriving = false;
             p.departing = false;
         }
@@ -692,8 +726,114 @@ public class Game {
 
     public static void showObligations() {
         // goes through players, figures out which are bootstrapped and need to be fulfilled
+        String obli = "No open bootstraps!";
+        for (Player p : players) {
+            if (p.bootNum > 0) {
+                if (obli.equals("No open bootstraps!")) {
+                    // does starting text
+                    obli = "Before puzzle completion must close these bootstraps: \n";
+                }
+                obli += "\n" + p.obliText();
+            }
+        }
+        JOptionPane.showMessageDialog(null,
+                obli,
+                "Open Bootstraps", JOptionPane.INFORMATION_MESSAGE);
+    }
 
+    public static void removeDeparted() {
+        //removes players from array that time travelled, this also shifts stuff around
+        //should only be one! so it breaks when found
+        Player d = null;
+        for(Player p: players) {
+            if(p.departing) {
+                d = p;
+                break;
+            }
+        }
+        if(d != null) {
+            //found a departing time traveller
+            //shifts down all higher bootNums and adds age modifier
+            for(Player p: players) {
+                if(p.bootNum > d.bootNum) {
+                    p.bootNum--;
+                    //adds time elapsed by the departed player
+                    p.agemod += (currentTimestep-d.birthday);
+                }
+            }
+            //now removes this player!
+            //really, really tried to eradicate from all existence!
+            players.remove(d);
+            findCellWithPlayer(d).player = null;
+            d = null;
+            highestBootnum--;
+        }
+    }
 
+    public static Cell findCellWithPlayer(Player p) {
+        // finds cell with this player
+        for(Cell c: cells) {
+            if(c.player != null) {
+                if(c.player.equals(p)) {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static boolean checkCapableFulfill(Player p) {
+        // checks to see if this player is capable of fulfilling any obligation
+        // if not, tells why
+        for(Player q: players) {
+            if(q.bootNum > 0){
+                if(q.bootNum - 1 == p.bootNum) {
+                    // of correct boot number, now check keys
+                    // temporary array that we will chip away at as we check keys
+                    String[] tempkeys = p.getKeyArray().clone();
+                    String[] needkeys = q.getOriginalKeys();
+                    for(int i = 0; i < maxKeys; i++) {
+                        if(!needkeys[i].equals("")) {
+                            //needs this key!
+                            //checks to see of this key is present somewhere in tempkeys
+                            boolean found = false;
+                            for(int j = 0; j < maxKeys; j++) {
+                                if(tempkeys[j].equals(needkeys[i])) {
+                                    // has key... deletes then breaks
+                                    tempkeys[j] = "";
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if(!found) {
+                                //needs a key the player doesn't have!
+                                JOptionPane.showMessageDialog(null,
+                                        "This player is missing required keys! See bootstrap menu for full list.",
+                                        "Time Travel", JOptionPane.WARNING_MESSAGE);
+
+                                return false;
+                            }
+                        }
+                    }
+                    // if it gets here, we're good!
+                    return true;
+                }
+            }
+        }
+        JOptionPane.showMessageDialog(null,
+                "This player is not of the correct generation to close any bootstraps!",
+                "Time Travel", JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
+
+    public static boolean checkObligations() {
+        // checks for open obligations
+        for(Player p: players) {
+            if(p.bootNum > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void playerCrushed() {
@@ -713,7 +853,7 @@ public class Game {
                 null,
                 opts,
                 opts[0]);
-        switch(restartOrQuit) {
+        switch (restartOrQuit) {
             case 0:
                 //restart level
                 loadLevel(true);

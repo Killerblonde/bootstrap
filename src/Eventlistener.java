@@ -258,8 +258,9 @@ public class Eventlistener implements GLEventListener {
                 ttAnimation = false;
                 ttAnimationBegun = false;
                 // tells game that arrivals are done
+                // first removes time traveller if there was a departure
+                Game.removeDeparted();
                 Game.noTimeTravellers();
-
                 Mouseinput.pauseMouse = false;
             }
 

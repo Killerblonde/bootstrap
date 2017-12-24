@@ -105,7 +105,7 @@ public class Mouseinput implements MouseListener {
                                     Eventlistener.pauseRendering = true;
                                     int bootstrapChoice = JOptionPane.showConfirmDialog(
                                             null,
-                                            "Boostrap Player from Future?",
+                                            "Bootstrap player from future?",
                                             "Time Machine",
                                             JOptionPane.YES_NO_OPTION);
                                     if (bootstrapChoice == 0) {
@@ -127,7 +127,7 @@ public class Mouseinput implements MouseListener {
                                         String messageText2 = "Bootstrap with another key?";
                                         while (addedKeys < Game.maxKeys) {
                                             String messageText = "";
-                                            if(addedKeys == 0){
+                                            if (addedKeys == 0) {
                                                 messageText = messageText1;
                                             } else {
                                                 messageText = messageText2;
@@ -151,11 +151,13 @@ public class Mouseinput implements MouseListener {
                                                 addedKeys++;
                                             }
                                         }
+                                        //sets original keys
+                                        p.setAllOriginalKeys(targ.getKeyArray().clone());
                                         //unpauses renderer and does time travel animation
                                         Game.deselect();
                                         noSelect = true;
-                                        Eventlistener.pauseRendering = false;
                                     }
+                                    Eventlistener.pauseRendering = false;
                                 } else if (s != null) {
                                     // checks adjacency and ability to receive key
                                     if (s.player != null && Game.checkAdjacent(s, targ) &&
@@ -182,8 +184,8 @@ public class Mouseinput implements MouseListener {
                                                     targ.addKey(giveKey);
                                                     s.removeKey(giveKey);
                                                 }
+                                                noSelect = true;
                                             }
-                                            noSelect = true; // does not select new cell, keeps selected player
                                         } else {
                                             // trying to unlock door
                                             if (s.hasThisKey(targ.label)) {
@@ -202,8 +204,38 @@ public class Mouseinput implements MouseListener {
                                     } else if (s.equals(targ) && s.getType() == 8) {
                                         // only other action possible is a player clicking on themself on a time machine
                                         // this is to fulfill a bootstrap
+                                        // checks to make sure there is actually a bootstrap to fulfil
+                                        if (Game.checkObligations()) {
+                                            // checks to see if this player is capable of closing a bootstrap
+                                            // must be of correct generation and have all require keys
+                                            // if this fails, the called method will tell user why
+                                            if(Game.checkCapableFulfill(s.player)) {
+                                                // asks if the user is sure they want to close a bootstrap
+                                                Eventlistener.pauseRendering = true;
+                                                int bootstrapChoice = JOptionPane.showConfirmDialog(
+                                                        null,
+                                                        "Send this player back in time to close bootstrap?",
+                                                        "Time Machine",
+                                                        JOptionPane.YES_NO_OPTION);
+                                                if (bootstrapChoice == 0) {
+                                                    // fulfills bootstrap!
+                                                    s.player.departing = true;
+                                                    Eventlistener.ttAnimation = true;
+                                                    Game.deselect();
+                                                    noSelect = true;
+                                                }
+                                                Eventlistener.pauseRendering = false;
+                                            }
+                                        } else {
+                                            JOptionPane.showMessageDialog(null,
+                                                    "No open bootstraps! Vacate cell to bootstrap.",
+                                                    "Time Machine",
+                                                    JOptionPane.INFORMATION_MESSAGE);
+                                        }
 
-                                        System.out.println("fulfill");
+
+                                        Game.deselect();
+                                        noSelect = true;
                                     }
                                 }
                                 break;
