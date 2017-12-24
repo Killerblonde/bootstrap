@@ -52,9 +52,6 @@ public class Game {
             f.mkdirs();
         }
 
-        //gives first player, even if user only uses editor
-        players.add(new Player());
-
         String[] opts = {"Play Level",
                 "Level Editor"};
         gameMode = JOptionPane.showOptionDialog(null,
@@ -164,6 +161,8 @@ public class Game {
             Eventlistener.outroAnimation = true;
         } else {
             Renderer.setUnitsWide(Math.max(3 * gridRows, 3 * gridCols));
+            //gives first player, even if user only uses editor
+            players.add(new Player());
         }
     }
 
@@ -208,6 +207,9 @@ public class Game {
             currentTimestep = 0;
             highestBootnum = 0;
             command = 0;
+            //gives first player, even if user only uses editor
+            players.clear();
+            players.add(new Player());
 
             Eventlistener.pauseRendering = true;
             newCellsFromString(currentLevelString);
@@ -351,8 +353,6 @@ public class Game {
                 // this method will finish timestep
                 finishTimestep();
             }
-            // advances timestep integer
-            currentTimestep++;
         }
     }
 
@@ -399,6 +399,7 @@ public class Game {
             }
         }
         //checks win
+        boolean advance = true;
         for(Cell c: cells) {
             if(c.getType() == 9 && c.player != null && !checkObligations()) {
                 // win!
@@ -426,10 +427,15 @@ public class Game {
                         System.exit(0);
                         break; //heh
                 }
+                advance = false;
             }
         }
         // unlocks
         lockTimestep = false;
+        // just advances timestep integer
+        if(advance) {
+            currentTimestep++;
+        }
     }
 
     public static void checkWin() {
