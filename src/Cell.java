@@ -120,9 +120,9 @@ public class Cell {
                 break;
             case 2:
                 // button
-                red = 0.5f;
-                green = 0;
-                blue = 0;
+                red = 0.9f;
+                green = 0.2f;
+                blue = 0.3f;
                 labelled = true;
                 customLabel = true;
                 passable = true;
@@ -177,8 +177,8 @@ public class Cell {
             case 8:
                 // time machine
                 red = 0;
-                green = 0.3f;
-                blue = 0.9f;
+                green = 0.5f;
+                blue = 1f;
                 labelled = false;
                 customLabel = false;
                 passable = true;
