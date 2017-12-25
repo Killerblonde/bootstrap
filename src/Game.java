@@ -728,16 +728,13 @@ public class Game {
                         "Time machines are the exciting element that makes Bootstrap a unique puzzle game. \n" +
                         "Players can interact with time machines in two ways: Bootstrapping, and Fulfilling. \n" +
                         "When bootstrapping, the player summons a version of their self from the future to appear. \n" +
-                        "This player can be bootstrapped holding a key, itself said to be bootstrapped. \n" +
-                        "Every additional bootstrapped player will receive another question mark by their age. \n " +
+                        "This player can be bootstrapped holding keys, itself said to be bootstrapped. \n" +
+                        "Every additional bootstrapped player will receive another question mark by their age. \n" +
                         "The time machine must be vacant at the moment of bootstrapping! \n" +
                         "All bootstrapped players and keys must be 'fulfilled' before completing the puzzle. \n" +
-                        "This means a younger player (perhaps with a key) must be sent back in time. \n" +
-                        "You must fulfill bootstraps with a player exactly one question mark older. \n" +
-                        "This is to prevent older players from 'growing up' to become younger players. \n" +
-                        "\n" +
-                        "After completing a puzzle, you can 'view' your solution through the eyes of the player! \n" +
-                        "This is the only time you actually experience time travel. The game is otherwise linear. \n"
+                        "This means a younger player (perhaps with keys) must be sent back in time. \n" +
+                        "You must fulfill bootstraps with a player exactly one 'generation' (denoted '?') younger. \n" +
+                        "This is to prevent older players from 'growing up' to become younger players. \n"
                 , "Bootstrap", JOptionPane.INFORMATION_MESSAGE);
     }
 
