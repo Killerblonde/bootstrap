@@ -825,11 +825,23 @@ public class Game {
                             if (!found) {
                                 //needs a key the player doesn't have!
                                 JOptionPane.showMessageDialog(null,
-                                        "This player is missing required keys! See bootstrap menu for full list.",
+                                        "This player is missing required keys!" +
+                                                "See bootstrap menu for full list.",
                                         "Time Travel", JOptionPane.WARNING_MESSAGE);
 
                                 return false;
                             }
+                        }
+                    }
+                    // makes sure there are no keys left in tempkeys - otherwise, player has too many!
+                    for(int i = 0; i < Game.maxKeys; i++) {
+                        if(!tempkeys[i].equals("")) {
+                            // too many keys!
+                            JOptionPane.showMessageDialog(null,
+                                    "This player has too many keys! " +
+                                            "See bootstrap menu for full list.",
+                                    "Time Travel", JOptionPane.WARNING_MESSAGE);
+                            return false;
                         }
                     }
                     // if it gets here, we're good!

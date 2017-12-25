@@ -208,6 +208,7 @@ public class Mouseinput implements MouseListener {
                                         if (Game.checkObligations()) {
                                             // checks to see if this player is capable of closing a bootstrap
                                             // must be of correct generation and have all require keys
+                                            // also, cannot have any extraneous keys!
                                             // if this fails, the called method will tell user why
                                             if (Game.checkCapableFulfill(s.player)) {
                                                 // asks if the user is sure they want to close a bootstrap
