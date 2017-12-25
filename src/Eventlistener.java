@@ -28,6 +28,8 @@ public class Eventlistener implements GLEventListener {
     public static boolean outroAnimation = false;
     public static boolean outroAnimationBegun = false;
 
+    private TextRenderer botRend = new TextRenderer(new Font("Ariel", Font.BOLD, 18));
+
     // after display finishes outro animation, should finish the loading process in Game method
     public static boolean finishLoad = false;
 
@@ -69,6 +71,7 @@ public class Eventlistener implements GLEventListener {
             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
             gl.glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+
             gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
             gl.glMatrixMode(GL2.GL_PROJECTION);
@@ -223,7 +226,6 @@ public class Eventlistener implements GLEventListener {
             }
 
             // now renders the top and bottom text
-            TextRenderer botRend = new TextRenderer(new Font("Ariel", Font.BOLD, 18));
             botRend.beginRendering(Renderer.getWindowWidth(), Renderer.getWindowHeight());
             botRend.setColor(1, 1, 1, 0.8f);
             botRend.draw(Game.getBotText(), 5, 7);
