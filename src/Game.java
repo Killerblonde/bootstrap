@@ -802,7 +802,15 @@ public class Game {
         for (Player q : players) {
             if (q.bootNum > 0) {
                 if (q.bootNum - 1 == p.bootNum) {
-                    // of correct boot number, now check keys
+                    // of correct boot number, checks if player is at the correct time machine
+                    if(p.col != q.arriveCol || p.row != q.arriveRow) {
+                        // wrong time machine!
+                        JOptionPane.showMessageDialog(null,
+                                "Wrong time machine to fulfill bootstrap!",
+                                "Time Travel", JOptionPane.WARNING_MESSAGE);
+                        return false;
+                    }
+                    // at correct time machine, now check keys
                     // temporary array that we will chip away at as we check keys
                     String[] tempkeys = p.getKeyArray().clone();
                     String[] needkeys = q.getOriginalKeys();

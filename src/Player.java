@@ -11,6 +11,10 @@ public class Player {
     public int mRow = 0;
     public boolean willMove = false;
 
+    // time machine where this player first arrived
+    public int arriveCol = 0;
+    public int arriveRow = 0;
+
     //for time travel animations
     public boolean arriving = false;
     public boolean departing = false;

@@ -125,6 +125,8 @@ public class Mouseinput implements MouseListener {
                                         p.arriving = true;
                                         p.col = targ.col;
                                         p.row = targ.row;
+                                        p.arriveCol = targ.col;
+                                        p.arriveRow = targ.row;
                                         Game.players.add(p);
                                         targ.player = p;
                                         // asks if the bootstrapped player should have any keys
