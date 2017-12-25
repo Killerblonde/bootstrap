@@ -771,8 +771,8 @@ public class Game {
             for (Player p : players) {
                 if (p.bootNum > d.bootNum) {
                     p.bootNum--;
-                    //adds time elapsed by the departed player
-                    p.agemod += (currentTimestep - d.birthday);
+                    //adds time elapsed by the departed player, including agemod
+                    p.agemod += (currentTimestep - d.birthday + d.agemod);
                 }
             }
             //now removes this player!
