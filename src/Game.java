@@ -770,9 +770,12 @@ public class Game {
             //shifts down all higher bootNums and adds age modifier
             for (Player p : players) {
                 if (p.bootNum > d.bootNum) {
+                    if(p.bootNum == d.bootNum + 1) {
+                        //adds time elapsed by the departed player, including agemod
+                        //only to first!
+                        p.agemod += (currentTimestep - d.birthday + d.agemod);
+                    }
                     p.bootNum--;
-                    //adds time elapsed by the departed player, including agemod
-                    p.agemod += (currentTimestep - d.birthday + d.agemod);
                 }
             }
             //now removes this player!
