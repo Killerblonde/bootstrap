@@ -76,6 +76,10 @@ public class Mouseinput implements MouseListener {
                                         Game.deselect();
                                         noSelect = true;
                                     } else {
+                                        // finds cell that it was going to move to, and unsets moveplanned
+                                        if(s.player.willMove) {
+                                            Game.getCell(s.player.mRow, s.player.mCol).hasMovePlanned = false;
+                                        }
                                         s.player.willMove = true;
                                         s.player.mCol = targ.col;
                                         s.player.mRow = targ.row;
@@ -86,10 +90,12 @@ public class Mouseinput implements MouseListener {
                                     }
                                 } else if (s.equals(targ) && s.player != null) {
                                     // clicked same cell to move, cancels and deselects
+                                    if(s.player.willMove) {
+                                        Game.getCell(s.player.mRow, s.player.mCol).hasMovePlanned = false;
+                                    }
                                     // doesn't matter if mCol and mRow are still set to something lol
                                     s.player.willMove = false;
                                 }
-                                //otherwise move impossible
                                 break;
                             case 1:
                                 //interact
