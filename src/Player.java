@@ -11,22 +11,23 @@ public class Player {
     public int mRow = 0;
     public boolean willMove = false;
 
-    // time machine where this player first arrived
-    public int arriveCol = 0;
-    public int arriveRow = 0;
+    // time machine coords that this player must fulfill (if not highest bootnum)
+    public int burdenCol = 0;
+    public int burdenRow = 0;
 
     //for time travel animations
     public boolean arriving = false;
     public boolean departing = false;
 
     private String[] keys = new String[Game.maxKeys];
-    private String[] originalKeys = new String[Game.maxKeys];
+    private String[] burdenKeys = new String[Game.maxKeys];
 
     public Player() {
-        // populates keys (causing problems?)
+        // populates keys (null otherwise...causes problems...)
 
         for (int k = 0; k < Game.maxKeys; k++) {
             keys[k] = "";
+            burdenKeys[k] = "";
         }
     }
 
@@ -66,10 +67,10 @@ public class Player {
         return age;
     }
 
-    public boolean hasOriginalKeys() {
+    public boolean hasBurdenKeys() {
         // figures out of the player has any keys
         for (int i = 0; i < Game.maxKeys; i++) {
-            if (!originalKeys[i].equals("")) {
+            if (!burdenKeys[i].equals("")) {
                 return true;
             }
         }
@@ -83,25 +84,25 @@ public class Player {
         willMove = false;
     }
 
-    public String[] getOriginalKeys() {
-        return originalKeys;
+    public String[] getBurdenKeyArray() {
+        return burdenKeys;
     }
 
-    public void setAllOriginalKeys(String[] keys) {
-        originalKeys = keys;
+    public void setAllBurdenKeys(String[] keys) {
+        burdenKeys = keys;
     }
 
-    public String listOriginalKeys() {
+    public String listBurdenKeys() {
         String k = "";
         for (int i = 0; i < Game.maxKeys; i++) {
-            if (originalKeys[i].equals("")) {
+            if (burdenKeys[i].equals("")) {
                 break;
             } else if (i > 0) {
                 // not first key!
-                k += ", " + originalKeys[i];
+                k += ", " + burdenKeys[i];
             } else {
                 // first key
-                k += originalKeys[i];
+                k += burdenKeys[i];
             }
         }
         return k;
@@ -120,10 +121,10 @@ public class Player {
             }
         }
         String obli = "Player of " + gentext + " must travel to timestep " + birthday;
-        if (!hasOriginalKeys()) {
+        if (!hasBurdenKeys()) {
             obli += ".";
         } else {
-            obli += " holding keys: " + listOriginalKeys() + ".";
+            obli += " holding keys: " + listBurdenKeys() + ".";
         }
         return obli;
     }

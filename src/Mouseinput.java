@@ -15,6 +15,8 @@ public class Mouseinput implements MouseListener {
 
         // left click to select cells
         if (e.getButton() == 1 && !pauseMouse) {
+            // PAUSES MOUSE TO AVOID DOUBLE CLICKING NONSENSE
+            pauseMouse = true;
             // selects given cell, if possible
             // first finds what unit we are in
             float unitsWide = Renderer.unitsWide;
@@ -120,13 +122,10 @@ public class Mouseinput implements MouseListener {
                                         Eventlistener.ttAnimation = true;
                                         Player p = new Player();
                                         p.bootNum = Game.highestBootnum + 1;
-                                        Game.highestBootnum++;
                                         p.birthday = Game.currentTimestep;
                                         p.arriving = true;
                                         p.col = targ.col;
                                         p.row = targ.row;
-                                        p.arriveCol = targ.col;
-                                        p.arriveRow = targ.row;
                                         Game.players.add(p);
                                         targ.player = p;
                                         // asks if the bootstrapped player should have any keys
@@ -160,7 +159,10 @@ public class Mouseinput implements MouseListener {
                                             }
                                         }
                                         //sets original keys
-                                        p.setAllOriginalKeys(targ.getKeyArray().clone());
+                                        p.setAllBurdenKeys(targ.getKeyArray().clone());
+                                        //emburdens highest bootnum player
+                                        Game.emburdenHighest(targ.row,targ.col,targ.getKeyArray().clone());
+                                        Game.highestBootnum++; //now advances bootnum
                                         //unpauses renderer and does time travel animation
                                         Game.deselect();
                                         noSelect = true;
@@ -213,7 +215,7 @@ public class Mouseinput implements MouseListener {
                                         // only other action possible is a player clicking on themself on a time machine
                                         // this is to fulfill a bootstrap
                                         // checks to make sure there is actually a bootstrap to fulfil
-                                        if (Game.checkObligations()) {
+                                        if (Game.checkOpenBootstraps()) {
                                             // checks to see if this player is capable of closing a bootstrap
                                             // must be of correct generation and have all require keys
                                             // also, cannot have any extraneous keys!
@@ -282,6 +284,8 @@ public class Mouseinput implements MouseListener {
                 // deselects
                 Game.deselect();
             }
+            //unpauses mouse
+            pauseMouse = false;
         }
     }
 

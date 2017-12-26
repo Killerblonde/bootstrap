@@ -401,7 +401,7 @@ public class Game {
         //checks win
         boolean advance = true;
         for (Cell c : cells) {
-            if (c.getType() == 9 && c.player != null && !checkObligations()) {
+            if (c.getType() == 9 && c.player != null && !checkOpenBootstraps()) {
                 // win!
                 JOptionPane.showMessageDialog(null, "Congratulations! You win!",
                         "Level complete!",
@@ -770,7 +770,7 @@ public class Game {
             //shifts down all higher bootNums and adds age modifier
             for (Player p : players) {
                 if (p.bootNum > d.bootNum) {
-                    if(p.bootNum == d.bootNum + 1) {
+                    if (p.bootNum == d.bootNum + 1) {
                         //adds time elapsed by the departed player, including agemod
                         //only to first!
                         p.agemod += (currentTimestep - d.birthday + d.agemod);
@@ -778,6 +778,7 @@ public class Game {
                     p.bootNum--;
                 }
             }
+
             //now removes this player!
             //really, really tried to eradicate from all existence!
             players.remove(d);
@@ -785,6 +786,23 @@ public class Game {
             d = null;
             highestBootnum--;
         }
+    }
+
+    public static void emburdenHighest(int brow, int bcol, String[] bkeys) {
+        // emburdens highest bootnum player
+        Player b = getPlayerBootNum(highestBootnum);
+        b.burdenRow = brow;
+        b.burdenCol = bcol;
+        b.setAllBurdenKeys(bkeys);
+    }
+
+    public static Player getPlayerBootNum(int bootNum) {
+        for (Player p : players) {
+            if (p.bootNum == bootNum) {
+                return p;
+            }
+        }
+        return null;
     }
 
     public static Cell findCellWithPlayer(Player p) {
@@ -800,70 +818,67 @@ public class Game {
     }
 
     public static boolean checkCapableFulfill(Player p) {
-        // checks to see if this player is capable of fulfilling any obligation
-        // if not, tells why
-        for (Player q : players) {
-            if (q.bootNum > 0) {
-                if (q.bootNum - 1 == p.bootNum) {
-                    // of correct boot number, checks if player is at the correct time machine
-                    if(p.col != q.arriveCol || p.row != q.arriveRow) {
-                        // wrong time machine!
-                        JOptionPane.showMessageDialog(null,
-                                "Wrong time machine to fulfill bootstrap!",
-                                "Time Travel", JOptionPane.WARNING_MESSAGE);
-                        return false;
-                    }
-                    // at correct time machine, now check keys
-                    // temporary array that we will chip away at as we check keys
-                    String[] tempkeys = p.getKeyArray().clone();
-                    String[] needkeys = q.getOriginalKeys();
-                    for (int i = 0; i < maxKeys; i++) {
-                        if (!needkeys[i].equals("")) {
-                            //needs this key!
-                            //checks to see of this key is present somewhere in tempkeys
-                            boolean found = false;
-                            for (int j = 0; j < maxKeys; j++) {
-                                if (tempkeys[j].equals(needkeys[i])) {
-                                    // has key... deletes then breaks
-                                    tempkeys[j] = "";
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (!found) {
-                                //needs a key the player doesn't have!
-                                JOptionPane.showMessageDialog(null,
-                                        "This player is missing required keys!" +
-                                                "See bootstrap menu for full list.",
-                                        "Time Travel", JOptionPane.WARNING_MESSAGE);
+        // checks to see if this player is capable of fulfilling its burden
+        if (p.bootNum == highestBootnum) {
+            JOptionPane.showMessageDialog(null,
+                    "This player is not of the correct generation to close any bootstraps!",
+                    "Time Travel", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        // must be in right location
+        if (p.col != p.burdenCol || p.row != p.burdenRow) {
+            // at wrong time machine
+            JOptionPane.showMessageDialog(null,
+                    "Wrong time machine to fulfill bootstrap!",
+                    "Time Travel", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
 
-                                return false;
-                            }
-                        }
+        // at correct time machine, now check keys
+        if (!checkSameKeys(p.getKeyArray(), p.getBurdenKeyArray())) {
+            JOptionPane.showMessageDialog(null,
+                    "This player is either missing required keys, or has too many! " +
+                            "See bootstrap menu for full list.",
+                    "Time Travel", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
+        // if it gets here, we're good!
+        return true;
+    }
+
+    public static boolean checkSameKeys(String[] keys1, String[] keys2) {
+
+        String[] tempkeys = keys1.clone();
+        for (int i = 0; i < maxKeys; i++) {
+            if (!keys2[i].equals("")) {
+                //needs this key!
+                //checks to see of this key is present somewhere in tempkeys
+                boolean found = false;
+                for (int j = 0; j < maxKeys; j++) {
+                    if (tempkeys[j].equals(keys2[i])) {
+                        // has key... deletes then breaks
+                        tempkeys[j] = "";
+                        found = true;
+                        break;
                     }
-                    // makes sure there are no keys left in tempkeys - otherwise, player has too many!
-                    for(int i = 0; i < Game.maxKeys; i++) {
-                        if(!tempkeys[i].equals("")) {
-                            // too many keys!
-                            JOptionPane.showMessageDialog(null,
-                                    "This player has too many keys! " +
-                                            "See bootstrap menu for full list.",
-                                    "Time Travel", JOptionPane.WARNING_MESSAGE);
-                            return false;
-                        }
-                    }
-                    // if it gets here, we're good!
-                    return true;
+                }
+                if (!found) {
+                    //missing a key!
+                    return false;
                 }
             }
         }
-        JOptionPane.showMessageDialog(null,
-                "This player is not of the correct generation to close any bootstraps!",
-                "Time Travel", JOptionPane.WARNING_MESSAGE);
-        return false;
+        for (int i = 0; i < Game.maxKeys; i++) {
+            if (!tempkeys[i].equals("")) {
+                // too many keys!
+                return false;
+            }
+        }
+        return true;
     }
 
-    public static boolean checkObligations() {
+    public static boolean checkOpenBootstraps() {
         // checks for open obligations
         for (Player p : players) {
             if (p.bootNum > 0) {
