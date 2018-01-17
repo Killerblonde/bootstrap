@@ -500,7 +500,7 @@ public class Cell {
         return r;
     }
 
-    public void flipOpenClosed() {
+    public Boolean flipOpenClosed() {
         // flips door open or closed
         if (cellType == 5) {
             //open
@@ -511,8 +511,10 @@ public class Cell {
             //if there is a player under the door, ENDS GAME!!!
             if (player != null) {
                 Game.playerCrushed();
+                return true;
             }
         }
         autoProp(false, false);
+        return false;
     }
 }

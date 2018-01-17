@@ -373,6 +373,7 @@ public class Game {
             }
         }
         // now see what button groups are activated and not
+        boolean crushed = false;
         for (Cell c : cells) {
             if (c.getType() == 2) {
                 // found a button
@@ -393,7 +394,11 @@ public class Game {
                     if (d.activated != allActivated && d.label.equals(butlab)) {
                         // door has yet to be activated
                         d.activated = allActivated;
-                        d.flipOpenClosed();
+                        // if player is crushed, sets boolean so that timestep is not advanced on new level load
+                        // does not set back to false, (hence if statement)
+                        if(d.flipOpenClosed()) {
+                            crushed = true;
+                        }
                     }
                 }
             }
@@ -433,7 +438,7 @@ public class Game {
         // unlocks
         lockTimestep = false;
         // just advances timestep integer
-        if (advance) {
+        if (advance && !crushed) {
             currentTimestep++;
         }
     }
